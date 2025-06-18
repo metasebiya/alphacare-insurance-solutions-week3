@@ -101,7 +101,6 @@ class DataCleaner:
             else:
                 print(f"⚠️ Column '{col}' not found in DataFrame — skipping.")
 
-        print(f"\n📂 Data Types after amendment:\n{df.dtypes}")
         file_name = "MachineLearningRatingV3_cleaned.csv"
         file_path = os.path.join(self.output_dir, file_name)
         try:
