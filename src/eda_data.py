@@ -4,6 +4,61 @@ import os
 
 
 class DataCleaner:
+    dtype_map = {
+        'UnderwrittenCoverID': 'int64',
+        'PolicyID': 'int64',
+        'TransactionMonth': 'datetime64[ns]',
+        'IsVATRegistered': 'bool',
+        'Citizenship': 'category',
+        'LegalType' : 'category',
+        'Title': 'object',
+        'Language' : 'object',
+        'Bank' : 'object',
+        'AccountType' : 'category',
+        'MaritalStatus': 'category',
+        'Gender': 'category',
+        'Country': 'object',
+        'Province': 'object',
+        'PostalCode': 'int64',
+        'MainCrestaZone': 'object',
+        'SubCrestaZone': 'object',
+        'ItemType': 'category',
+        'mmcode': 'float64',
+        'VehicleType': 'category',
+        'RegistrationYear': 'int64',
+        'make': 'object',
+        'Model': 'object',
+        'Cylinders': 'float64',
+        'cubiccapacity': 'float64',
+        'kilowatts': 'float64',
+        'bodytype': 'category',
+        'NumberOfDoors': 'float64',
+        'VehicleIntroDate': 'datetime64[ns]',
+        'CustomValueEstimate': 'float64',
+        'AlarmImmobiliser': 'object',
+        'TrackingDevice': 'object',
+        'CapitalOutstanding': 'object',
+        'NewVehicle' : 'object',
+        'WrittenOff': 'object',
+        'Rebuilt': 'object',
+        'Converted': 'object',
+        'CrossBorder': 'object',
+        'NumberOfVehiclesInFleet': 'float64',
+        'SumInsured' : 'float64',
+        'TermFrequency': 'object',
+        'CalculatedPremiumPerTerm':'float64',
+        'ExcessSelected': 'object',
+        'CoverCategory': 'object',
+        'CoverType': 'category',
+        'CoverGroup': 'object',
+        'Section' : 'object',
+        'Product': 'object',
+        'StatutoryClass': 'object',
+        'StatutoryRiskType': 'category',
+        'TotalPremium':'float64',
+        'TotalClaims': 'float64'
+    }
+
 
     def __init__(self, output_dir: str = "../data/processed/"):
         """
@@ -22,7 +77,6 @@ class DataCleaner:
         print("\n📋 Initial Columns:", df.columns.tolist())
 
 
-
         # Shape and basic info
         print(f"\n🧱 Shape: {df.shape}")
         print(f"📦 Total Elements: {df.size}")
@@ -36,7 +90,28 @@ class DataCleaner:
         df.dropna(axis=1, how='all', inplace=True)
         df.drop_duplicates(inplace=True)
         print(f"\n🔍 Duplicate Rows After dropping: {df.duplicated().sum()}")
-        
+
+        #change datatype
+        for col, dtype in self.dtype_map.items():
+            if col in df.columns:
+                if 'datetime' in dtype:
+                    df[col] = pd.to_datetime(df[col], errors='coerce')
+                else:
+                    df[col] = df[col].astype(dtype)
+            else:
+                print(f"⚠️ Column '{col}' not found in DataFrame — skipping.")
+
+        file_name = "MachineLearningRatingV3_cleaned.csv"
+        file_path = os.path.join(self.output_dir, file_name)
+        try:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                print(f"🔄 Replacing existing file: {file_name}")
+            df.to_csv(file_path, index=False)
+            print(f"✅ Cleaned data saved to: {file_path}")
+        except Exception as e:
+            print(f"❌ Failed to save cleaned data: {e}")
+
         return df
 
 
