@@ -4,7 +4,7 @@
     *$py.class
     
     #data
-    data/
+    data/*
     
     # Virtual environment
     venv/
