@@ -5,6 +5,7 @@
     
     #data
     data/*
+    data/processed/*
     
     # Virtual environment
     venv/
